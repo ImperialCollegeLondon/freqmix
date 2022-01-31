@@ -11,9 +11,13 @@ for argidx = 1:2:length(varargin)
        case 'config'
            cfg = varargin{argidx+1};
        case 'mixing_ids'
-           mixing_ids = varargin{argidx+1} ;          
+           mixing_ids = varargin{argidx+1} ;
+       case 'folder'
+           cfg.folder = varargin{argidx+1};
    end
 end   
+
+
 
 % if table then plot entire scan
 if isequal(class(mixing), 'table')

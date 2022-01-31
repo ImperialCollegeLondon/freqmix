@@ -15,7 +15,7 @@ function [triplets] = find_triplets(freqs,freq_gap,min_freq)
         for i = k+1:n   
            for j = i+1:n 
               if round(freqs(k) + freqs(i),tol) == round(freqs(j),tol)
-                 if  abs(freqs(i)-freqs(j))>=freq_gap && abs(freqs(k)-freqs(i))>=freq_gap && abs(freqs(k)-freqs(j))>=freq_gap
+                 if  round(abs(freqs(i)-freqs(j)),tol)>=freq_gap && round(abs(freqs(k)-freqs(i)),tol)>=freq_gap && round(abs(freqs(k)-freqs(j)),tol)>=freq_gap
 
                     cnt = cnt + 1;
                     triplets(cnt,:) = [freqs(k),freqs(i),freqs(j)];

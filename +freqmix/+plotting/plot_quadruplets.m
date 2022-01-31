@@ -21,7 +21,7 @@ function plot_3d_scatter(mixing,config)
     r1 = quad(:,1);r2 = quad(:,2);e1 = quad(:,3);e2 = quad(:,4);            
     scatter3(r1,r2,e1); hold on; scatter3(r1,r2,e2);
     
-    xlabel('Freq1 (Hz)');ylabel('Freq1 (Hz)');zlabel('Freq3 (Hz)')
+    xlabel('f1 (Hz)');ylabel('f2 (Hz)');zlabel('f3 (Hz)')
     title(['Significant Quadruplets'])        
     xlim([config.min_freq config.max_freq]); ylim([config.min_freq config.max_freq]); zlim([config.min_freq config.max_freq]);
     grid on;

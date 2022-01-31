@@ -5,7 +5,7 @@ function [freq_bands, band_size, band_id] = get_bands(bands)
 freq_bands = [];
 
 if any(strcmp(bands,'delta'))
-   freq_bands = [freq_bands;[1 4]];
+   freq_bands = [freq_bands;[0 4]];
 end
 
 if any(strcmp(bands,'theta'))

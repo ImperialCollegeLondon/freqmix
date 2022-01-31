@@ -51,9 +51,15 @@ classdef frequencymixing
                     obj.logger.log('Running computations in parallel ...');
 
                     delete(gcp('nocreate'));parpool(obj.config.n_workers);
+                    % set up data queue
+                    D = parallel.pool.DataQueue;
+                    afterEach(D, @disp)                    
                     % loop over all samples
                     parfor i = 1:height(datacollection.data)
-                        triplet_mixing{i} = obj.run_sample(datacollection.data{i,'data'}{1},'triplet');
+                        % run triplet mixing on sample
+                        triplet_mixing{i} = obj.run_sample(datacollection.data{i,'data'}{1},'triplet');                                            
+                        % update data queue
+                        send(D, i);                    
                     end                    
                 else
                     % loop over all samples
@@ -74,9 +80,17 @@ classdef frequencymixing
                 if obj.config.parallel
                     % start parallel pool
                     delete(gcp('nocreate'));parpool(obj.config.n_workers);
+                    
+                    % set up data queue
+                    D = parallel.pool.DataQueue;
+                    afterEach(D, @disp)   
+                    
                     % loop over all samples
                     parfor i = 1:height(datacollection.data)
                         harmonic_mixing{i} = obj.run_sample(datacollection.data{i,'data'}{1},'harmonic');
+                        
+                        % update data queue
+                        send(D, i);  
                     end           
                 else
                     % loop over all samples
@@ -92,11 +106,18 @@ classdef frequencymixing
             if obj.config.test_quadruplets
                 quadruplet_mixing = cell(height(datacollection.data),1);                
                 if obj.config.parallel
-                    % start parallel pool
-                    delete(gcp('nocreate'));parpool(obj.config.n_workers);
+                    % start parallel pool                    
+                    delete(gcp('nocreate'));parpool(obj.config.n_workers);         
+                    
+                    % set up data queue
+                    D = parallel.pool.DataQueue;
+                    afterEach(D, @disp)   
+                    
                     % loop over all samples
-                    parfor i = 1:height(datacollection.data)
+                    parfor i = 1:height(datacollection.data)                        
                         quadruplet_mixing{i} = obj.calculate_to_quadruplets(obj.tripletmixing{i},obj.harmonicmixing{i});
+                        % update data queue
+                        send(D, i);  
                     end                    
                 else
                     % loop over all samples
@@ -211,7 +232,7 @@ classdef frequencymixing
                    quad_freqs = empty_table{i,1:4};
                    quad_chans = empty_table{i,5:8};                   
                    
-                   triplet_idx = [1,2,3; 1 2 4; 1 3 4; 2 3 4];
+                   triplet_idx = [1 2 3; 1 2 4; 1 3 4; 2 3 4];
                    triplets= zeros(4,1);
                    
                    % loop over the 4 triplets within the quadruplet
@@ -246,9 +267,16 @@ classdef frequencymixing
                       harmonics(k) = harmonic_index;
                    end
                    empty_table.harmonic_indexes{i} = harmonics;                   
-               end      
-               
+               end                     
             end
+            
+            % check summative triplets
+            if isequal(type,'triplet')                
+                for i = 1:height(empty_table)
+                    empty_table.summative(i) = (empty_table{i,'Freq1'} + empty_table{i,'Freq2'} == empty_table{i,'Freq3'});
+                end
+            end
+      
                                 
         end
         
@@ -310,9 +338,10 @@ classdef frequencymixing
                                ["teststat", "single"]; ...
                                ["quantile", "single"]; ...
                                ["hoi", "single"]; ...
-                               ["clusterpvalue", "single"]];
-            elseif isequal(type, 'quadruplet')
-                
+                               ["clusterpvalue", "single"];...
+                               ["summative", "int8"]];
+                           
+            elseif isequal(type, 'quadruplet')                
                  constructor = [["R1", "single"]; ...
                                ["R2", "single"]; ...
                                ["E1", "single"]; ...

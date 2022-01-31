@@ -140,11 +140,14 @@ for k = 1:2
     significant_mixing.pvalue = cluster_pvals;
     significant_mixing.teststats = t_value_vector;
     significant_mixing = significant_mixing(significant_mixing.clusterhvalue==1,:);
+
+    % copying unique mixing and adding t-value column for storage
+    tvalue_table = unique_mixing;
+    tvalue_table.tvalue = t_value_vector; 
     
     % store unique mixing for the group comparison
     results{k,2} = significant_mixing;
-    results{k,3} = t_value_vector;  
-    
+    results{k,3} = tvalue_table;      
     
     
 end

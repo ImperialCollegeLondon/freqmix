@@ -24,6 +24,8 @@ classdef config_statistics < freqmix.config.config_base
         equal_variance = false; % equal variance in t-test assumption
         freq_bin_size = 1; % freq bin size (should be the same as used in spectrum)
         
+        summative_only = 1; % only perform stats on triplets that are summative (or subtractive)
+        
         parallel = true % compute statistical tests in paralle
         use_gpu = true % use gpu arrays
         

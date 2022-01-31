@@ -5,10 +5,12 @@ classdef config_plotting < freqmix.config.config_base
     properties
         
         bands = {'delta','theta','alpha','beta','low gamma'};
-        saveplot = 0;
+        saveplot = 1;
+        savedata = 1;
         folder = './plots/'
-        min_freq = 0
+        min_freq = 0;
         max_freq
+        title = 0;
         
         mixing_combinations
         channels

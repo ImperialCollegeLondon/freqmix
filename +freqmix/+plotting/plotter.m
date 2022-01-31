@@ -48,7 +48,7 @@ classdef plotter
             if ~isempty(statistics.individual_test)
                 for i = 1:size(statistics.individual_test,1)
                     individual = ['individual_test_',num2str(i)];
-                    folder = [sub_folder,'group_test/',individual,'/'];
+                    folder = char(join([sub_folder,'group_test/',comparison,'/'],''));
                     obj.check_folder(folder);
                     if ~isempty(statistics.individual_test{i})
                         plot_mixing(statistics.individual_test{i},'config',obj.config,'folder',folder)
@@ -60,7 +60,7 @@ classdef plotter
             if ~isempty(statistics.group_test)
                 for i = 1:size(statistics.group_test,1)
                     comparison = [statistics.group_test{i,1},'_vs_',statistics.group_test{i,2}];
-                    folder = [sub_folder,'group_test/',comparison,'/'];
+                    folder = char(join([sub_folder,'group_test/',comparison,'/'],''));
                     obj.check_folder(folder);
                     if ~isempty(statistics.group_test{i,3})
                         plot_mixing(statistics.group_test{i,3},'config',obj.config,'folder',folder)
@@ -72,7 +72,7 @@ classdef plotter
             if ~isempty(statistics.regression_test)
                 for i = 1:size(statistics.regression_test,1)
                     direction = statistics.regression_test{i,1};
-                    folder = [sub_folder,'regression_test/',direction,'/'];
+                    folder = char(join([sub_folder,'group_test/',comparison,'/'],''));
                     obj.check_folder(folder);
                     if ~isempty(statistics.regression_test{i,2})
                         plot_mixing(statistics.regression_test{i,2},'config',obj.config,'folder',folder)

@@ -17,6 +17,11 @@ plot_tstat_bands_graph(mixing, mixing_combinations, config);
 plot_number_triplets_channels_graph(mixing,mixing_combinations,config);
 plot_tstat_channels_graph(mixing,mixing_combinations,config);
 
+% save csv file of mixing
+if config.savedata
+    writetable(mixing,[config.folder,'significant_triplets.csv'])
+end
+
 end
 
 function plot_3d_scatter(mixing,config)
@@ -27,8 +32,10 @@ function plot_3d_scatter(mixing,config)
     figure;          
     x = freqs(:,1);y = freqs(:,2);z = freqs(:,3);
     scatter3(x,y,z); hold on;
-    xlabel('Freq1 (Hz)');ylabel('Freq1 (Hz)');zlabel('Freq3 (Hz)')
-    title(['Significant Triplets'])        
+    xlabel('f1 (Hz)');ylabel('f2 (Hz)');zlabel('f3 (Hz)')
+    if config.title
+        title(['Significant Triplets']);   
+    end
     xlim([config.min_freq config.max_freq]); ylim([config.min_freq config.max_freq]); zlim([config.min_freq config.max_freq]);
     grid on;
     plot_params(gca)
@@ -49,8 +56,10 @@ function plot_3d_scatter_coloured(mixing,config)
         trip = triplets_cluster{:,1:3};  
         x = trip(:,1);y = trip(:,2);z = trip(:,3);
         scatter3(x,y,z); hold on;
-        xlabel('Freq1 (Hz)');ylabel('Freq2 (Hz)');zlabel('Freq3 (Hz)')
-        title(['Significant Triplets'])        
+        xlabel('f1 (Hz)');ylabel('f2 (Hz)');zlabel('f3 (Hz)')
+        if config.title
+            title(['Significant Triplets']);   
+        end   
         xlim([config.min_freq config.max_freq]); ylim([config.min_freq config.max_freq]); zlim([config.min_freq config.max_freq]);
         grid on;
         plot_params(gca)    
@@ -110,13 +119,15 @@ end
 %p.EdgeLabel=g.Edges.Weight;
 p.EdgeColor = [0 0.4470 0.7410];
 p.EdgeAlpha = 1;
-title(['Frequency bands: # triplets normalised']); 
+if config.title
+    title(['Frequency bands: # triplets normalised']); 
+end
 plot_params(gca);
 cbarrow(max_edge);
 
 
 if config.saveplot
-    savefig([folder,'triplets_ntriplets_freqbands_network.fig'])
+    savefig([config.folder,'triplets_ntriplets_freqbands_network.fig'])
     close all;
 end
 
@@ -181,13 +192,14 @@ end
 %p.EdgeLabel=g.Edges.Weight;
 p.EdgeColor = [0 0.4470 0.7410];
 p.EdgeAlpha = 1;
-
-title(['Frequency bands: sum of teststats normalised'])
+if config.title
+    title(['Frequency bands: sum of teststats normalised'])
+end
 plot_params(gca)
 cbarrow(max_edge)
 
 if config.saveplot    
-    savefig([folder,'triplets_sumt_freqbands_network.fig'])
+    savefig([config.folder,'triplets_sumt_freqbands_network.fig'])
     close all;
 end
 
@@ -246,11 +258,12 @@ p.EdgeAlpha = 1;
 %p.EdgeLabel=g.Edges.Weight;
 cbarrow(max_edge)
 
-
-title(['Frequency mixing within/between channels'])
+if config.title
+    title(['Frequency mixing within/between channels']);
+end
 plot_params(gca)
 if config.saveplot
-    savefig([folder,'triplets_ntriplets_channels.fig']) 
+    savefig([config.folder,'triplets_ntriplets_channels.fig']) 
     close all;
 end
 
@@ -308,10 +321,12 @@ end
 p.EdgeColor = [0 0.4470 0.7410];
 p.EdgeAlpha = 1;
 cbarrow(max_edge);
-title(['Channels: sum of teststats normalised'])
+if config.title
+    title(['Channels: sum of teststats normalised'])
+end
 plot_params(gca)
 if config.saveplot
-    savefig([folder,'triplets_sumt_channels_network.fig'])
+    savefig([config.folder,'triplets_sumt_channels_network.fig'])
     close all;
 end
 

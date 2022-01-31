@@ -12,6 +12,15 @@ permute_spatially = config.permute_spatially;
 num_permutations = config.n_permutations;
 num_trials = height(data);
 tThreshold = abs(tinv(alpha, num_trials-1));
+summative_only = config.summative_only;
+
+% filter summative triplets
+if isequal(mixing_type,'triplet')
+    if summative_only
+        mixing = filter_summative(mixing);
+    end
+end
+
 
 % set parameters specific to mixing type
 if isequal(mixing_type,'harmonic')
@@ -22,6 +31,8 @@ elseif isequal(mixing_type, 'quadruplet')
     unique_mixing = mixing{1}(:,1:8);    
 end
 n_mix = height(unique_mixing);
+
+
 
 % identify groups
 [groups, group_ids] = unique(data.group_id);
@@ -160,11 +171,15 @@ for k = 1:size(group_comparisons,1)
     significant_mixing.cluster_id = cluster_id;
     significant_mixing.pvalue = cluster_pvals;
     significant_mixing.teststats = t_value_vector;
-    significant_mixing = significant_mixing(significant_mixing.clusterhvalue==1,:);
+    significant_mixing = significant_mixing(significant_mixing.clusterhvalue==1,:);    
+
+    % copying unique mixing and adding t-value column for storage
+    tvalue_table = unique_mixing;
+    tvalue_table.tvalue = t_value_vector;
     
     % store unique mixing for the group comparison
     all_comparisons{k,3} = significant_mixing;
-    all_comparisons{k,4} = t_value_vector;
+    all_comparisons{k,4} = tvalue_table;
 end
 
 %tmap = unique(triplet_table(:,5:10));
