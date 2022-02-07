@@ -84,7 +84,8 @@ classdef config_experiments < freqmix.config.config_base
             end                    
                         
             % config spectrum
-            p = inputParser;p.KeepUnmatched=true;            
+            p = inputParser;p.KeepUnmatched=true;      
+            addParameter(p,'spectrum_method',obj.config_spectrum.spectrum_method,@ischar); % method for spectrum
             addParameter(p,'wavelet_parameters',obj.config_spectrum.wavelet_parameters,@iscell); % sigma for wavelet decomposition
             addParameter(p,'sampling_frequency',obj.config_spectrum.sampling_frequency,@isfloat); % sampling frequency of time-series
             addParameter(p,'min_freq',obj.config_spectrum.min_freq,@isfloat); % min frequency for spectrum
