@@ -146,7 +146,10 @@ classdef frequencymixing
                results{i,'hvalues'} = {[triplets.hvalue; harmonics.hvalue]};
                results{i,'teststats'} = {[triplets.teststat; harmonics.teststat]};
                results{i,'hois'} = {[triplets.hoi; harmonics.hoi]};
-               results{i,'hoi'} = mean(triplets.hoi);               
+               
+               % two triplets to have evidence of frequency mixing
+               sorted_hoi = sort(triplets.hoi,'descend');
+               results{i,'hoi'} = mean(sorted_hoi(1:2));               
             end
             
         end

@@ -9,7 +9,7 @@ for i = 1:length(mixing)
     results = mixing{i};
     
     % check if column exists
-    summative_present = any(strcmp('hoi',results.Properties.VariableNames));
+    summative_present = any(strcmp('summative',results.Properties.VariableNames));
     
     % if summative column present
     if summative_present
