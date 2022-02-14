@@ -21,7 +21,8 @@ classdef statistics
         
         function obj = run(obj, datacollection, frequencymixing)
             % compute statistics on frequency mixing object
-            
+            obj.logger.log('Running statistics ...');
+        
             if obj.config.harmonics
                 obj = obj.run_harmonic_statistics(datacollection.data, frequencymixing.harmonicmixing);
             end
@@ -31,11 +32,16 @@ classdef statistics
             if obj.config.quadruplets
                 obj = obj.run_quadruplet_statistics(datacollection.data, frequencymixing.quadrupletmixing);
             end
+            
+            obj.logger.log('All statistics finished ...');
+
         end
         
         function obj = run_harmonic_statistics(obj, data, harmonic_mixing)
             import freqmix.statistics.*
             mixing_type = 'harmonic'; 
+            obj.logger.log('Running harmonic statistics ...');
+
             
             if obj.config.individual_test
                 obj.harmonic_statistics.individual_test = individual_tests(harmonic_mixing, mixing_type, obj.config);
@@ -59,6 +65,7 @@ classdef statistics
         function obj = run_triplet_statistics(obj, data, triplet_mixing)
             import freqmix.statistics.*            
             mixing_type = 'triplet'; 
+            obj.logger.log('Running triplet statistics ...');
             
             if obj.config.individual_test
                 obj.triplet_statistics.individual_test = individual_tests(triplet_mixing, mixing_type, obj.config);
@@ -81,7 +88,8 @@ classdef statistics
         function obj = run_quadruplet_statistics(obj, data, quadruplet_mixing)
             import freqmix.statistics.*
             mixing_type = 'quadruplet'; 
-            
+            obj.logger.log('Running quadruplet statistics ...');
+         
             if obj.config.individual_test
                 % to implement
             end

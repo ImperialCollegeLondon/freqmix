@@ -15,7 +15,8 @@ classdef plotter
         
         function [] = run(obj, statistics)
             %METHOD1 Summary of this method goes here
-            
+            obj.logger.log('Plotting mixing results ...');
+
             obj.check_folder(obj.config.folder)
             
             % plot harmonics

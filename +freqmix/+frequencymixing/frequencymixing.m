@@ -76,6 +76,7 @@ classdef frequencymixing
             
             % run harmonic mixing tests
             if obj.config.test_harmonics
+                obj.logger.log('Running harmonic dependence tests ...');
                 harmonic_mixing = cell(height(datacollection.data),1);
                 if obj.config.parallel
                     % start parallel pool
@@ -104,7 +105,9 @@ classdef frequencymixing
             
             % combine quadruplets based on triplet tests
             if obj.config.test_quadruplets
-                quadruplet_mixing = cell(height(datacollection.data),1);                
+               obj.logger.log('Running quadruplet dependence tests ...');
+               
+               quadruplet_mixing = cell(height(datacollection.data),1);                
                 if obj.config.parallel
                     % start parallel pool                    
                     delete(gcp('nocreate'));parpool(obj.config.n_workers);         
@@ -127,6 +130,8 @@ classdef frequencymixing
                 end
                 obj.quadrupletmixing = quadruplet_mixing;
             end
+            
+            obj.logger.log('All frequency mixing tests completed ...');
             
         end
         
@@ -179,7 +184,7 @@ classdef frequencymixing
                    
             % scan over triplets
             for i = 1:height(results)
-                
+                %tic;
                 freqs = round(results{i,freq_index},obj.config.tolerance);
                 channels = results{i,channel_index};
                 dependence_result = obj.run_dependence_test(phases,...
@@ -194,7 +199,7 @@ classdef frequencymixing
                 results.teststat(i) = dependence_result.teststat;
                 results.hoi(i) = dependence_result.hoi;
                 results.quantile(i) = dependence_result.quantile;
-
+                %toc;
             end 
             
                
@@ -286,27 +291,31 @@ classdef frequencymixing
         function obj = get_frequency_channel_combinations(obj)
             % combine all frequency mixing with all channel combinations
             import freqmix.frequencymixing.utils.*
+            
+            disp('Defining all frequency/channel mixing combinations to test ...');
+            
             if obj.config.test_harmonics
                 harmonic_ch_combs = channel_permutations(obj.config.channels,'harmonic');
                 obj.freq_channel_combinations.harmonic = frequency_channel_combinations(obj.config.harmonics,harmonic_ch_combs,...
-                                                                                                         obj.config.within_channels,...
-                                                                                                         obj.config.between_channels);    
+                                                                                         obj.config.within_channels,...
+                                                                                         obj.config.between_channels);    
             end
             
             if obj.config.test_triplets
                 triplet_ch_combs = channel_permutations(obj.config.channels,'triplet');
                 obj.freq_channel_combinations.triplet = frequency_channel_combinations(obj.config.triplets,triplet_ch_combs,...
-                                                                                                        obj.config.within_channels,...
-                                                                                                        obj.config.between_channels);    
+                                                                                        obj.config.within_channels,...
+                                                                                        obj.config.between_channels);    
             end 
             
             if obj.config.test_quadruplets
                 quadruplet_ch_combs = channel_permutations(obj.config.channels,'quadruplet');
                 obj.freq_channel_combinations.quadruplet = frequency_channel_combinations(obj.config.quadruplets,quadruplet_ch_combs,...
-                                                                                                        obj.config.within_channels,...
-                                                                                                        obj.config.between_channels);    
+                                                                                        obj.config.within_channels,...
+                                                                                        obj.config.between_channels);    
             end       
-                        
+            
+            
         end
         
         function obj = check_config(obj)       
@@ -365,6 +374,9 @@ classdef frequencymixing
             
         end
         
+        
     end
+
+    
 end
 

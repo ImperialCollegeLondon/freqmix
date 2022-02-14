@@ -16,6 +16,7 @@ classdef config_experiments < freqmix.config.config_base
 
         verbose = true
         logging = true
+        save = false
     end
     
     methods
@@ -42,6 +43,7 @@ classdef config_experiments < freqmix.config.config_base
             % config experiment
             p = inputParser;p.KeepUnmatched=true;
             addParameter(p,'name',obj.name,@isstring); % name
+            addParameter(p,'save',obj.save,@isbool); % save the experiment or not  
             parse(p,arguments{:});  
             for i = 1:length(p.Parameters)
                 obj.(p.Parameters{i}) = p.Results.(p.Parameters{i});
@@ -124,6 +126,8 @@ classdef config_experiments < freqmix.config.config_base
             % config plotting
             p = inputParser;p.KeepUnmatched=true; 
             addParameter(p,'folder',obj.config_plotting.folder); % plotting folder
+            addParameter(p,'saveplot',obj.config_plotting.saveplot); % save plots or not
+            addParameter(p,'savedata',obj.config_plotting.savedata); % save data used for plotting or not
             parse(p,arguments{:});  
             for i = 1:length(p.Parameters)
                 obj.config_plotting.(p.Parameters{i}) = p.Results.(p.Parameters{i});
