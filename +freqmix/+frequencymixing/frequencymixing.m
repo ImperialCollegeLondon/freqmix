@@ -11,6 +11,8 @@ classdef frequencymixing
         tripletmixing = {}
         quadrupletmixing = {}
         
+        progression % details on which signals have been completed
+        
         tables
 
         freq_channel_combinations
@@ -26,7 +28,7 @@ classdef frequencymixing
             obj.config = config;
             obj.config_spectrum = config_spectrum;            
             obj = obj.get_frequency_channel_combinations();            
-
+            
             if obj.config.test_harmonics
                 obj.tables.harmonic = obj.construct_table('harmonic');
             end                 
@@ -39,36 +41,64 @@ classdef frequencymixing
         end
         
         function obj = run(obj, datacollection)
-            % main function to run all samples            
+            % main function to run all samples   
             
+            % store details on progression of run
+            obj = obj.setup_progression(datacollection);
+
             % run triplet dependence tests
             if obj.config.test_triplets
                 obj.logger.log('Running triplet dependence tests ...');
                 triplet_mixing = cell(height(datacollection.data),1);
                 
+                % load existing temp files into empty cell array
+                if obj.config.load_progression
+                    [obj, triplet_mixing] = obj.load_existing_mixing(triplet_mixing, 'triplets');
+                end
+                
                 if obj.config.parallel
                     % start parallel pool
-                    obj.logger.log('Running computations in parallel ...');
-
+                    obj.logger.log('Running triplet computations in parallel ...');
+                    
+                    % clear previous parallel pool
                     delete(gcp('nocreate'));parpool(obj.config.n_workers);
+                    
                     % set up data queue
                     D = parallel.pool.DataQueue;
-                    afterEach(D, @disp)                    
+                    afterEach(D, @disp) 
+                    
                     % loop over all samples
                     parfor i = 1:height(datacollection.data)
-                        % run triplet mixing on sample
-                        triplet_mixing{i} = obj.run_sample(datacollection.data{i,'data'}{1},'triplet');                                            
-                        % update data queue
-                        send(D, i);                    
+                        
+                        % only run mixing if not already completed
+                        if ismember(i, obj.progression.triplets.to_run)
+                            % run triplet mixing on sample
+                            triplet_mixing{i} = obj.run_sample(datacollection.data{i,'data'}{1},'triplet');                                            
+
+                            % update data queue
+                            send(D, i);     
+
+                            % update progression
+                            obj.update_progression(i, triplet_mixing{i}, 'triplets');
+                        end
                     end                    
                 else
                     % loop over all samples
                     obj.logger.log('Running signals sequentially (not parallel) ...');
 
                     for i = 1:height(datacollection.data)
-                        obj.logger.log(sprintf('Computing for signal %i',i));
-                        triplet_mixing{i} = obj.run_sample(datacollection.data{i,'data'}{1},'triplet');
-                    end         
+                        
+                        % subset of signals to run
+                        if ismember(i, obj.progression.triplets.to_run)
+                            
+                            obj.logger.log(sprintf('Computing for signal %i',i));                            
+                            triplet_mixing{i} = obj.run_sample(datacollection.data{i,'data'}{1},'triplet');
+                            
+                            % update progression
+                            obj.update_progression(i, triplet_mixing{i}, 'triplets');     
+                        end
+                    end 
+                    
                 end
                 obj.tripletmixing = triplet_mixing;
             end
@@ -78,29 +108,58 @@ classdef frequencymixing
             if obj.config.test_harmonics
                 obj.logger.log('Running harmonic dependence tests ...');
                 harmonic_mixing = cell(height(datacollection.data),1);
+                
+                % load existing temp files into empty cell array
+                if obj.config.load_progression
+                    [obj, harmonic_mixing] = obj.load_existing_mixing(harmonic_mixing, 'harmonics');
+                end
+                
                 if obj.config.parallel
                     % start parallel pool
+                    obj.logger.log('Running harmonic computations in parallel ...');
+                    
+                    % clear previous parallel pool
                     delete(gcp('nocreate'));parpool(obj.config.n_workers);
                     
                     % set up data queue
                     D = parallel.pool.DataQueue;
-                    afterEach(D, @disp)   
+                    afterEach(D, @disp) 
                     
                     % loop over all samples
                     parfor i = 1:height(datacollection.data)
-                        harmonic_mixing{i} = obj.run_sample(datacollection.data{i,'data'}{1},'harmonic');
                         
-                        % update data queue
-                        send(D, i);  
-                    end           
+                        % only run mixing if not already completed
+                        if ismember(i, obj.progression.harmonics.to_run)
+                            % run triplet mixing on sample
+                            harmonic_mixing{i} = obj.run_sample(datacollection.data{i,'data'}{1},'harmonic');                                            
+
+                            % update data queue
+                            send(D, i);     
+
+                            % update progression
+                            obj.update_progression(i, harmonic_mixing{i}, 'triplets');
+                        end
+                    end                    
                 else
                     % loop over all samples
+                    obj.logger.log('Running signals sequentially (not parallel) ...');
+
                     for i = 1:height(datacollection.data)
-                        harmonic_mixing{i} = obj.run_sample(datacollection.data{i,'data'}{1},'harmonic');
-                    end         
+                        
+                        % subset of signals to run
+                        if ismember(i, obj.progression.harmonics.to_run)
+                            
+                            obj.logger.log(sprintf('Computing for signal %i',i));                            
+                            harmonic_mixing{i} = obj.run_sample(datacollection.data{i,'data'}{1},'harmonic');
+                            
+                            % update progression
+                            obj.update_progression(i, harmonic_mixing{i}, 'harmonics');     
+                        end
+                    end 
+                    
                 end
                 obj.harmonicmixing = harmonic_mixing;
-            end           
+            end
             
             
             % combine quadruplets based on triplet tests
@@ -110,6 +169,9 @@ classdef frequencymixing
                quadruplet_mixing = cell(height(datacollection.data),1);                
                 if obj.config.parallel
                     % start parallel pool                    
+                    obj.logger.log('Running quadruplet computations in parallel ...');
+                    
+                    % clear previous parallel pool
                     delete(gcp('nocreate'));parpool(obj.config.n_workers);         
                     
                     % set up data queue
@@ -119,6 +181,7 @@ classdef frequencymixing
                     % loop over all samples
                     parfor i = 1:height(datacollection.data)                        
                         quadruplet_mixing{i} = obj.calculate_quadruplets(obj.tripletmixing{i},obj.harmonicmixing{i});
+                        
                         % update data queue
                         send(D, i);  
                     end                    
@@ -132,6 +195,9 @@ classdef frequencymixing
             end
             
             obj.logger.log('All frequency mixing tests completed ...');
+            
+            % remove temp files if they exist
+            %remove_temp();
             
         end
         
@@ -201,8 +267,7 @@ classdef frequencymixing
                 results.quantile(i) = dependence_result.quantile;
                 %toc;
             end 
-            
-               
+                           
         end
         
         function dependence_result = run_dependence_test(obj,all_phases,spectral_freqs,freqs,channels,test)
@@ -318,6 +383,77 @@ classdef frequencymixing
             
         end
         
+        function obj = setup_progression(obj, datacollection)   
+            % creating arrays to detail which signals have been completed
+            
+            % only perform setup if they haven't previous been setup
+            if obj.config.test_harmonics
+                obj.progression.harmonics.completed = [];
+                obj.progression.harmonics.to_run = datacollection.signal_info.signal_ids;
+            end
+            
+            if obj.config.test_triplets
+                obj.progression.triplets.completed = [];
+                obj.progression.triplets.to_run = datacollection.signal_info.signal_ids;
+            end 
+            
+            if obj.config.test_quadruplets
+                obj.progression.quadruplets.completed = [];
+                obj.progression.quadruplets.to_run = datacollection.signal_info.signal_ids;
+            end                  
+            
+        end
+        
+        function obj = update_progression(obj, signal_id, mixing, type)
+            
+            % update the completed signals
+            obj.progression.(type).completed = [obj.progression.(type).completed, signal_id];            
+            obj.progression.(type).to_run = obj.progression.(type).to_run(~ismember(obj.progression.(type).to_run, obj.progression.(type).completed)); 
+            
+            % save progression in temp files
+            if obj.config.save_progression
+                
+                % make temporary directory
+                [~,~,~] = mkdir('./temp/'); 
+                
+                % define name of temporary file
+                subfile = ['./temp/' type '_temp_s' num2str(signal_id)]; 
+                
+                % save the mixing results for a given signal
+                save(subfile, 'mixing');  
+            end
+        end
+        
+        function [obj, mixing_array] = load_existing_mixing(obj, mixing_array, type)
+            
+            % find all temp files of mixing type
+            folder = './temp/';
+            files = dir(fullfile(folder,[type '_temp_s*.mat']));
+            
+            % loop over files
+            for i = 1:length(files)                
+                % extract string of file
+                signal_id = sscanf(files(i).name, [type '_temp_s%f.mat']);                
+                
+                % update the progression array
+                obj.progression.(type).completed = [obj.progression.(type).completed, signal_id];            
+                obj.progression.(type).to_run = obj.progression.(type).to_run(~ismember(obj.progression.(type).to_run, obj.progression.(type).completed)); 
+            end            
+
+            
+            % loop over all the completed mixing
+            for signal_id = obj.progression.(type).completed
+                subfile = ['./temp/' type '_temp_s' num2str(signal_id)]; 
+                load(subfile); % loads into a variable called 'mixing'
+                
+                % assign to position in the mixing array
+                mixing_array{signal_id} = mixing;
+            end
+            
+        end
+        
+
+        
         function obj = check_config(obj)       
             % check all necessary details are present in config
             
@@ -375,6 +511,13 @@ classdef frequencymixing
         end
         
         
+    end
+    
+    
+    methods (Static)
+        function remove_temp()
+            rmdir('./temp/')
+        end
     end
 
     

@@ -80,6 +80,8 @@ classdef config_experiments < freqmix.config.config_base
             addParameter(p,'between_channels',obj.config_frequencymixing.between_channels); % compute fm between channels
             addParameter(p,'channels',obj.config_frequencymixing.channels); % channels to mix
             addParameter(p,'freq_bin_size',obj.config_frequencymixing.freq_bin_size,@isfloat); % frequency bin size
+            addParameter(p,'save_progression',obj.config_frequencymixing.save_progression); % whether to save progression throughout FM analysis
+            addParameter(p,'load_progression',obj.config_frequencymixing.load_progression); % load temp files of FM
             parse(p,arguments{:});  
             for i = 1:length(p.Parameters)
                 obj.config_frequencymixing.(p.Parameters{i}) = p.Results.(p.Parameters{i});

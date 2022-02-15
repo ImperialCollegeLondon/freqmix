@@ -118,6 +118,8 @@ classdef experiment
                 obj.frequencymixing.logger = obj.logger;
                 obj.statistics.logger = obj.logger;
                 obj.datacollection.logger = obj.logger;
+                obj.plotter.logger = obj.logger;
+ 
             end
         end
         

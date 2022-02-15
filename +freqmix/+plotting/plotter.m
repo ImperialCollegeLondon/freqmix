@@ -4,6 +4,8 @@ classdef plotter
     
     properties
         config
+        
+        logger
     end
     
     methods

@@ -34,6 +34,8 @@ classdef config_frequencymixing < freqmix.config.config_base
         within_channels = true; % compute frequency mixing within channels
         between_channels = true; % compute frequency mixing between channels
         
+        save_progression = false; % save results for signals when they complete in temp files
+        load_progression = false; % load results for signals from temp files
         
         tolerance = 3; % rounding tolerance for matching frequencies
     end
