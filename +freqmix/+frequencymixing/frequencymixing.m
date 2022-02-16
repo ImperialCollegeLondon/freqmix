@@ -253,7 +253,7 @@ classdef frequencymixing
                 %tic;
                 freqs = round(results{i,freq_index},obj.config.tolerance);
                 channels = results{i,channel_index};
-                dependence_result = obj.run_dependence_test(phases,...
+                [dependence_result, triplet_type] = obj.run_dependence_test(phases,...
                                                             spectral_freqs,...
                                                             freqs,...
                                                             channels,...
@@ -265,16 +265,18 @@ classdef frequencymixing
                 results.teststat(i) = dependence_result.teststat;
                 results.hoi(i) = dependence_result.hoi;
                 results.quantile(i) = dependence_result.quantile;
+                results.type(i) = triplet_type;
                 %toc;
             end 
                            
         end
         
-        function dependence_result = run_dependence_test(obj,all_phases,spectral_freqs,freqs,channels,test)
+        function [dependence_result, triplet_type] = run_dependence_test(obj,all_phases,spectral_freqs,freqs,channels,test)
             % run a single dependence test
             
             index = find(ismember(spectral_freqs,freqs));            
             phases = [];
+            
             for i = 1:width(freqs)
                 phases(i,:) = all_phases(index(i), 1:obj.config.downsampling_frequency:end, channels(i));
             end
@@ -284,6 +286,13 @@ classdef frequencymixing
                                      obj.config.alpha,obj.config.use_gpu);
 
             
+            % only compute triplet type for triplets
+            if obj.config.triplet_type && width(freqs)==3
+                triplet_type = freqmix.frequencymixing.triplets.triplet_type(phases);
+            else
+                triplet_type = int8(0);
+            end
+                                 
         end
        
         
@@ -486,6 +495,7 @@ classdef frequencymixing
                                ["teststat", "single"]; ...
                                ["quantile", "single"]; ...
                                ["hoi", "single"]; ...
+                               ["type", "int8"]; ...
                                ["clusterpvalue", "single"];...
                                ["summative", "int8"]];
                            

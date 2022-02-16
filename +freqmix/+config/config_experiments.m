@@ -82,6 +82,7 @@ classdef config_experiments < freqmix.config.config_base
             addParameter(p,'freq_bin_size',obj.config_frequencymixing.freq_bin_size,@isfloat); % frequency bin size
             addParameter(p,'save_progression',obj.config_frequencymixing.save_progression); % whether to save progression throughout FM analysis
             addParameter(p,'load_progression',obj.config_frequencymixing.load_progression); % load temp files of FM
+            addParameter(p,'triplet_type',obj.config_frequencymixing.triplet_type); % compute the most likely triplet type
             parse(p,arguments{:});  
             for i = 1:length(p.Parameters)
                 obj.config_frequencymixing.(p.Parameters{i}) = p.Results.(p.Parameters{i});
