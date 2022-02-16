@@ -21,6 +21,16 @@ if isequal(mixing_type,'triplet')
     end
 end
 
+% if triplet type then extract from each
+if isequal(mixing_type,'triplet')
+    types = zeros([height(mixing{1}),length(mixing)]);
+    if sum(ismember(mixing{1}.Properties.VariableNames,'type'))
+        for i = 1:length(mixing)
+            types(:,i) = mixing{i}.type;
+        end
+    end
+end
+
 
 % set parameters specific to mixing type
 if isequal(mixing_type,'harmonic')
@@ -166,11 +176,18 @@ for k = 1:size(group_comparisons,1)
 
         end
     end
+    
     significant_mixing = unique_mixing;
     significant_mixing.clusterhvalue = clusterhValue;
     significant_mixing.cluster_id = cluster_id;
     significant_mixing.pvalue = cluster_pvals;
     significant_mixing.teststats = t_value_vector;
+    
+    % extract triplet type
+    if isequal(mixing_type,'triplet')
+        significant_mixing.type = mode(types(:,data.group_id==comparison(1)),2);
+    end
+    
     significant_mixing = significant_mixing(significant_mixing.clusterhvalue==1,:);    
 
     % copying unique mixing and adding t-value column for storage
