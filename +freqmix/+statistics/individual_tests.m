@@ -99,7 +99,7 @@ for k = 1:height(mixing)
     significant_mixing = significant_mixing(significant_mixing.clusterhvalue==1,:);
     
     if ~isempty(significant_mixing)
-        results{i,1} = significant_mixing;
+        results{k,1} = significant_mixing;
     end
 end
     

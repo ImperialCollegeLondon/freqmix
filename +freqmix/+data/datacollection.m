@@ -140,7 +140,7 @@ classdef datacollection
         end
 
         
-        function obj = update_info(obj)
+        function obj = update_info(obj)            
             
             obj.signal_info(1).n_signals = length(obj.signal_info.signal_ids);
             obj.sample_info(1).n_samples = length(obj.sample_info.sample_ids);
@@ -181,6 +181,13 @@ classdef datacollection
   
                 obj.data = [obj.data;surrogate_table];
                 
+                % update signal info
+                obj.signal_info.signal_ids = obj.data.signal_id';
+                obj.signal_info.signal_names = obj.data.signal_name';
+                obj.sample_info.sample_ids = obj.data.sample_id';
+                obj.sample_info.sample_names = obj.data.sample_name';
+                obj.group_info.group_ids = obj.data.group_id';
+                obj.group_info.group_names = obj.data.group_name';
             end
            
         end

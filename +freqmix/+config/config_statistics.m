@@ -13,16 +13,18 @@ classdef config_statistics < freqmix.config.config_base
         individual_test = false % cluster tests on individual signals
         surrogate_test = false % cluster test vs surrogate (z-test)
         
-        alpha_individual = 0.05 % alpha for perm tests
-        alpha_group = 0.01 % alpha for group tests
-        alpha_regression = 0.05 % alpha for regression test
-        cluster_alpha = 0.05 % alpha for significant of clusters
+        alpha_harmonic = struct('alpha_individual',0.05,'alpha_group',0.01,'alpha_regression',0.05,'cluster_alpha',0.05)
+        alpha_triplet = struct('alpha_individual',0.05,'alpha_group',0.01,'alpha_regression',0.05,'cluster_alpha',0.05)
+        alpha_quadruplet = struct('alpha_individual',0.05,'alpha_group',0.01,'alpha_regression',0.05,'cluster_alpha',0.05)
         
         n_permutations = 10000 % number of permutations cluster tests
         paired = true % if paired samples present, then paired tests.
         permute_spatially = true % permutations in frequency + channels
         equal_variance = false; % equal variance in t-test assumption
         freq_bin_size = 1; % freq bin size (should be the same as used in spectrum)
+        
+        intra_channel = false;
+        channels = {};
         
         summative_only = 1; % only perform stats on triplets that are summative (or subtractive)
         

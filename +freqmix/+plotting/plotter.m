@@ -17,7 +17,7 @@ classdef plotter
         
         function [] = run(obj, statistics)
             %METHOD1 Summary of this method goes here
-            obj.logger.log('Plotting mixing results ...');
+            %obj.logger.log('Plotting mixing results ...');
 
             obj.check_folder(obj.config.folder)
             
@@ -51,7 +51,7 @@ classdef plotter
             if ~isempty(statistics.individual_test)
                 for i = 1:size(statistics.individual_test,1)
                     individual = ['individual_test_',num2str(i)];
-                    folder = char(join([sub_folder,'group_test/',comparison,'/'],''));
+                    folder = char(join([sub_folder,'individual_test/',individual,'/'],''));
                     obj.check_folder(folder);
                     if ~isempty(statistics.individual_test{i})
                         plot_mixing(statistics.individual_test{i},'config',obj.config,'folder',folder)
@@ -75,7 +75,7 @@ classdef plotter
             if ~isempty(statistics.regression_test)
                 for i = 1:size(statistics.regression_test,1)
                     direction = statistics.regression_test{i,1};
-                    folder = char(join([sub_folder,'group_test/',comparison,'/'],''));
+                    folder = char(join([sub_folder,'regression_test/',direction,'/'],''));
                     obj.check_folder(folder);
                     if ~isempty(statistics.regression_test{i,2})
                         plot_mixing(statistics.regression_test{i,2},'config',obj.config,'folder',folder)

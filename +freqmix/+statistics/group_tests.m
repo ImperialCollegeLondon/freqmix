@@ -1,18 +1,25 @@
-function [all_comparisons] = group_tests(data, mixing, mixing_type, config)
+function [all_comparisons] = group_tests(data, mixing, mixing_type, config, varargin)
 
 import freqmix.statistics.hypothesis_tests.*
 import freqmix.statistics.utils.*
 
+% parse variable arguments
+p = inputParser;
+addParameter(p,'channel',''); % channel
+parse(p,varargin{:});  
+
 % set initial parameters
-alpha = config.alpha_group;
+alpha = config.(['alpha_' mixing_type]).alpha_group;
+cluster_alpha = config.(['alpha_' mixing_type]).cluster_alpha;
+
 paired = config.paired;
 equal_variance = config.equal_variance;
-cluster_alpha = config.cluster_alpha;
 permute_spatially = config.permute_spatially;
 num_permutations = config.n_permutations;
 num_trials = height(data);
 tThreshold = abs(tinv(alpha, num_trials-1));
 summative_only = config.summative_only;
+intra_channel = config.intra_channel;
 
 % filter summative triplets
 if isequal(mixing_type,'triplet')
@@ -31,17 +38,42 @@ if isequal(mixing_type,'triplet')
     end
 end
 
+% find id of channel name
+if config.intra_channel
+    channel_id = find(contains(config.channels,p.Results.channel));
+end
+
+
 
 % set parameters specific to mixing type
 if isequal(mixing_type,'harmonic')
-    unique_mixing = mixing{1}(:,1:4);
+    unique_mixing = mixing{1}(:,1:4);   
+    
+    if intra_channel
+        mixing_index = (unique_mixing.Channel1==channel_id) & (unique_mixing.Channel2==channel_id);  
+    else
+        mixing_index = ones([height(unique_mixing),1]);
+    end
+    
 elseif isequal(mixing_type,'triplet')
-    unique_mixing = mixing{1}(:,1:6);    
+    unique_mixing = mixing{1}(:,1:6);     
+    
+    if intra_channel
+        mixing_index = (unique_mixing.Channel1==channel_id) & (unique_mixing.Channel2==channel_id)  & (unique_mixing.Channel3==channel_id);  
+    else
+        mixing_index = ones([height(unique_mixing),1]);
+    end
+    
 elseif isequal(mixing_type, 'quadruplet')
-    unique_mixing = mixing{1}(:,1:8);    
+    unique_mixing = mixing{1}(:,1:8);   
+    
+    if intra_channel
+        mixing_index = (unique_mixing.Channel1==channel_id) & (unique_mixing.Channel2==channel_id)  & (unique_mixing.Channel3==channel_id)  & (unique_mixing.Channel4==channel_id);  
+    else
+        mixing_index = ones([height(unique_mixing),1]);
+    end
 end
 n_mix = height(unique_mixing);
-
 
 
 % identify groups
@@ -52,7 +84,7 @@ group_names = data.group_name(group_ids);
 if length(groups)==1
     error('Group comparison requires more than one group.')
 end
-    
+
     
 % identify all group comparisons to perform
 group_comparisons = perms(groups);
@@ -62,6 +94,14 @@ group_comparisons = unique(group_comparisons(:,1:2),'rows');
 all_test_vals = [];
 for i = 1:length(mixing)
     all_test_vals(:,i) = mixing{i}.hoi;
+end
+
+all_test_vals = all_test_vals(find(mixing_index),:);
+unique_mixing = unique_mixing(find(mixing_index),:);
+
+% updating group names with channel ids (if intra-channel)
+if intra_channel
+    group_names = group_names + '_' + p.Results.channel;
 end
 
 all_comparisons = {};
@@ -185,7 +225,7 @@ for k = 1:size(group_comparisons,1)
     
     % extract triplet type
     if isequal(mixing_type,'triplet')
-        significant_mixing.type = mode(types(:,data.group_id==comparison(1)),2);
+        significant_mixing.type = mode(types(find(mixing_index),data.group_id==comparison(1)),2);
     end
     
     significant_mixing = significant_mixing(significant_mixing.clusterhvalue==1,:);    

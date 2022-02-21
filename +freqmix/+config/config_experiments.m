@@ -110,10 +110,9 @@ classdef config_experiments < freqmix.config.config_base
             addParameter(p,'paired',obj.config_statistics.paired); % paired t-tests
             addParameter(p,'freq_bin_size',obj.config_statistics.freq_bin_size,@isfloat); % frequency bin size
             addParameter(p,'n_permutations',obj.config_statistics.n_permutations,@isfloat); % number of permutations
-            addParameter(p,'cluster_alpha',obj.config_statistics.cluster_alpha,@isfloat); % alpha for clusters
-            addParameter(p,'alpha_group',obj.config_statistics.alpha_group,@isfloat); % alpha for cluster perm test 
-            addParameter(p,'alpha_regression',obj.config_statistics.alpha_regression,@isfloat); % alpha for cluster perm test  
-            addParameter(p,'alpha_individual',obj.config_statistics.alpha_individual,@isfloat); % alpha for cluster perm test  
+            addParameter(p,'alpha_harmonic',obj.config_statistics.alpha_harmonic); % alpha for cluster perm test 
+            addParameter(p,'alpha_triplet',obj.config_statistics.alpha_triplet); % alpha for cluster perm test  
+            addParameter(p,'alpha_quadruplet',obj.config_statistics.alpha_quadruplet); % alpha for cluster perm test  
             addParameter(p,'harmonics',obj.config_statistics.harmonics); % statistical tests on harmonics 
             addParameter(p,'triplets',obj.config_statistics.triplets); % statistical tests on triplets 
             addParameter(p,'quadruplets',obj.config_statistics.quadruplets); % statistical tests on quadruplets 

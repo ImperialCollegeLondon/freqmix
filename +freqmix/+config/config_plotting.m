@@ -11,7 +11,7 @@ classdef config_plotting < freqmix.config.config_base
         min_freq = 0;
         max_freq
         title = 0;
-        
+
         mixing_combinations
         channels
         group_info

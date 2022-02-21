@@ -139,7 +139,6 @@ classdef experiment
                 obj.config.config_frequencymixing.channels = obj.datacollection.channel_info.channel_names;
             end
             
-            
         end
         
         function obj = update_configs(obj)
@@ -147,7 +146,7 @@ classdef experiment
             
             if ~isempty(obj.datacollection)
                 obj.datacollection.config = obj.config.config_data;
-            end
+            end           
             
             if ~isempty(obj.frequencymixing)
                 obj.frequencymixing.config_spectrum = obj.config.config_spectrum;
@@ -183,44 +182,54 @@ classdef experiment
         
         
         
-        function save_obj(obj)
+        function save_obj(obj, varargin)
             % save function when file is too large (splitting results into
             % separate mat files
             
-            filename = obj.name;
+            % parse input parameters for saving
+            p = inputParser; p.KeepUnmatched=true;
+            addParameter(p,'save_mixing',true); % save mixing results
+            parse(p,varargin{:});  
+
             
+            % 
+            filename = obj.name;            
             if strcmp(filename(end-3:end), '.mat')
                 filename = filename(1:end-4);
             end
-        
-            [status, msg, msgID] = mkdir(filename); 
-            [status, msg, msgID] = mkdir(['./' filename '/harmonicmixing/']);  
-            [status, msg, msgID] = mkdir(['./' filename '/tripletmixing/']);  
-            [status, msg, msgID] = mkdir(['./' filename '/quadrupletmixing/']);  
-
-            % save harmonics
-            for i = 1:length(obj.frequencymixing.harmonicmixing)
-                subfile = ['./' filename '/harmonicmixing/' filename '_s' num2str(i)];                   
-                sigtmp = obj.frequencymixing.harmonicmixing{i};                
-                save(subfile, 'sigtmp');                
-            end   
-            obj.frequencymixing.harmonicmixing = {};       
             
-            % save triplets
-            for i = 1:length(obj.frequencymixing.tripletmixing)
-                subfile = ['./' filename '/tripletmixing/' filename '_s' num2str(i)];                   
-                sigtmp = obj.frequencymixing.tripletmixing{i};                
-                save(subfile, 'sigtmp');                
-            end   
-            obj.frequencymixing.tripletmixing = {};     
+            % if save mixing parameter set
+            if p.Results.save_mixing
+                
+                [status, msg, msgID] = mkdir(filename); 
+                [status, msg, msgID] = mkdir(['./' filename '/harmonicmixing/']);  
+                [status, msg, msgID] = mkdir(['./' filename '/tripletmixing/']);  
+                [status, msg, msgID] = mkdir(['./' filename '/quadrupletmixing/']); 
 
-            % save quadruplets
-            for i = 1:length(obj.frequencymixing.quadrupletmixing)
-                subfile = ['./' filename '/quadrupletmixing/' filename '_s' num2str(i)];                   
-                sigtmp = obj.frequencymixing.quadrupletmixing{i};                
-                save(subfile, 'sigtmp');                
-            end   
-            obj.frequencymixing.quadrupletmixing = {};
+                % save harmonics
+                for i = 1:length(obj.frequencymixing.harmonicmixing)
+                    subfile = ['./' filename '/harmonicmixing/' filename '_s' num2str(i)];                   
+                    sigtmp = obj.frequencymixing.harmonicmixing{i};                
+                    save(subfile, 'sigtmp');                
+                end   
+                obj.frequencymixing.harmonicmixing = {};       
+
+                % save triplets
+                for i = 1:length(obj.frequencymixing.tripletmixing)
+                    subfile = ['./' filename '/tripletmixing/' filename '_s' num2str(i)];                   
+                    sigtmp = obj.frequencymixing.tripletmixing{i};                
+                    save(subfile, 'sigtmp');                
+                end   
+                obj.frequencymixing.tripletmixing = {};     
+
+                % save quadruplets
+                for i = 1:length(obj.frequencymixing.quadrupletmixing)
+                    subfile = ['./' filename '/quadrupletmixing/' filename '_s' num2str(i)];                   
+                    sigtmp = obj.frequencymixing.quadrupletmixing{i};                
+                    save(subfile, 'sigtmp');                
+                end   
+                obj.frequencymixing.quadrupletmixing = {};
+            end
             
             exp = obj;
             save([filename '.mat'], getVarName(exp));
@@ -239,31 +248,44 @@ classdef experiment
             end
             
             filename = obj.name;
-
+            
+            if obj.datacollection.generate_surrogate
+                n_signals = obj.datacollection.signal_info.n_signals*2 ;    
+            else
+                n_signals = obj.datacollection.signal_info.n_signals ; 
+            end
+              
+            
             % load harmonics
             if obj.frequencymixing.config.test_harmonics
-                for i = 1:obj.datacollection.signal_info.n_signals                
-                    subfile = ['./' filename '/harmonicmixing/' filename '_s' num2str(i)]; 
-                    load(subfile, 'sigtmp');
-                    obj.frequencymixing.harmonicmixing{i,1} = sigtmp;
+                if exist(['./' filename '/harmonicmixing/'],'dir')
+                    for i = 1:n_signals                
+                        subfile = ['./' filename '/harmonicmixing/' filename '_s' num2str(i)]; 
+                        load(subfile, 'sigtmp');
+                        obj.frequencymixing.harmonicmixing{i,1} = sigtmp;
+                    end
                 end
             end
             
             % load triplets
             if obj.frequencymixing.config.test_triplets
-                for i = 1:obj.datacollection.signal_info.n_signals                
-                    subfile = ['./' filename '/tripletmixing/' filename '_s' num2str(i)]; 
-                    load(subfile, 'sigtmp');
-                    obj.frequencymixing.tripletmixing{i,1} = sigtmp;
+                if exist(['./' filename '/tripletmixing/'],'dir')
+                    for i = 1:n_signals                
+                        subfile = ['./' filename '/tripletmixing/' filename '_s' num2str(i)]; 
+                        load(subfile, 'sigtmp');
+                        obj.frequencymixing.tripletmixing{i,1} = sigtmp;
+                    end
                 end
             end   
             
             % load quadruplets
             if obj.frequencymixing.config.test_quadruplets
-                for i = 1:obj.datacollection.signal_info.n_signals                
-                    subfile = ['./' filename '/quadrupletmixing/' filename '_s' num2str(i)]; 
-                    load(subfile, 'sigtmp');
-                    obj.frequencymixing.quadrupletmixing{i,1} = sigtmp;
+                if exist(['./' filename '/quadrupletmixing/'],'dir')
+                    for i = 1:n_signals                
+                        subfile = ['./' filename '/quadrupletmixing/' filename '_s' num2str(i)]; 
+                        load(subfile, 'sigtmp');
+                        obj.frequencymixing.quadrupletmixing{i,1} = sigtmp;
+                    end
                 end
             end               
             

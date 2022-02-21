@@ -5,6 +5,7 @@ classdef config_data < freqmix.config.config_base
     properties
         precision = 'single'
         gpu_array = true
+        generate_surrogate = false;
     end
     
     methods
