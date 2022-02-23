@@ -69,7 +69,14 @@ classdef statistics
             end
                        
             if obj.config.regression_test
-                obj.harmonic_statistics.regression_test = [obj.harmonic_statistics.regression_test, regression_tests(data, harmonic_mixing, mixing_type, obj.config)];
+                if obj.config.intra_channel
+                    % regression tests within each channel separately
+                    for c = 1:length(obj.config.channels)                        
+                        obj.harmonic_statistics.regression_test = [obj.harmonic_statistics.regression_test, regression_tests(data, harmonic_mixing, mixing_type, obj.config, 'channel', obj.config.channels{c})];
+                    end    
+                else
+                    obj.harmonic_statistics.regression_test = [obj.harmonic_statistics.regression_test, regression_tests(data, harmonic_mixing, mixing_type, obj.config)];
+                end
             end
                         
                
@@ -98,9 +105,15 @@ classdef statistics
             end
                        
             if obj.config.regression_test
-                obj.triplet_statistics.regression_test = [obj.triplet_statistics.regression_test, regression_tests(data, triplet_mixing, mixing_type, obj.config)];
-            end
-                        
+                if obj.config.intra_channel
+                    % regression tests within each channel separately
+                    for c = 1:length(obj.config.channels)                        
+                        obj.triplet_statistics.regression_test = [obj.triplet_statistics.regression_test, regression_tests(data, triplet_mixing, mixing_type, obj.config, 'channel', obj.config.channels{c})];
+                    end    
+                else
+                    obj.triplet_statistics.regression_test = [obj.triplet_statistics.regression_test, regression_tests(data, triplet_mixing, mixing_type, obj.config)];
+                end
+            end                        
                  
             
         end
@@ -128,7 +141,14 @@ classdef statistics
             end
                        
             if obj.config.regression_test
-                obj.quadruplet_statistics.regression_test = [obj.quadruplet_statistics.regression_test, regression_tests(data, quadruplet_mixing, mixing_type, obj.config)];
+                if obj.config.intra_channel
+                    % regression tests within each channel separately
+                    for c = 1:length(obj.config.channels)                        
+                        obj.quadruplet_statistics.regression_test = [obj.quadruplet_statistics.regression_test, regression_tests(data, quadruplet_mixing, mixing_type, obj.config, 'channel', obj.config.channels{c})];
+                    end    
+                else
+                    obj.quadruplet_statistics.regression_test = [obj.quadruplet_statistics.regression_test, regression_tests(data, quadruplet_mixing, mixing_type, obj.config)];
+                end
             end
                         
             

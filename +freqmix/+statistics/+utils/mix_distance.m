@@ -17,8 +17,8 @@ elseif isequal(mixing_type,'triplet')
 elseif isequal(mixing_type, 'quadruplet')
     freq_list = single(mixing{:,1:4});
     channel_list = mixing{:,5:8};
-    freq_cutoff = 3*config.freq_bin_size;
-    ch_cutoff = 2;
+    freq_cutoff = 2*config.freq_bin_size;
+    ch_cutoff = 3;
 end
 
 

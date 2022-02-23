@@ -145,8 +145,14 @@ for k = 1:size(group_comparisons,1)
     for p = 1:num_permutations 
 
         % permute between samples
-        shuffle = randsample(1:size(all_test_vals,2),size(all_test_vals,2)) ;
-        all_test_vals_perm = all_test_vals(:,shuffle);
+        if ~paired
+            shuffle = randsample(1:size(all_test_vals,2),size(all_test_vals,2)) ;
+            all_test_vals_perm = all_test_vals(:,shuffle);
+        else
+            % perform permutation later for paired
+            all_test_vals_perm = all_test_vals(:,:);  
+        end
+        
 
         % permute between frequencies and channels
         if permute_spatially==true
@@ -162,7 +168,12 @@ for k = 1:size(group_comparisons,1)
 
         if paired
             % if paired then subtract pairs from each other
-            t_value_vector_perm = simpleTTest((testvals_perm{1}-testvals_perm{2}),0);
+            diff = (testvals_perm{1}-testvals_perm{2});
+            
+            % permute paired samples by -1 and 1 mutiplications
+            perm = round(rand(size(diff,2),1)) * 2 - 1; 
+            permuted_diff = diff .* repmat(perm, [1 size(diff,1)])';
+            t_value_vector_perm = simpleTTest(permuted_diff,0);
         else
             % if not paired then subtract mean of other group
             t_value_vector_perm = simpleTTest2(testvals_perm{1},testvals_perm{2},equal_variance);

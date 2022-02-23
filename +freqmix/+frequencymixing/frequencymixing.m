@@ -219,8 +219,25 @@ classdef frequencymixing
                results{i,'hois'} = {[triplets.hoi; harmonics.hoi]};
                
                % two triplets to have evidence of frequency mixing
-               sorted_hoi = sort(triplets.hoi,'descend');
-               results{i,'hoi'} = mean(sorted_hoi(1:2));               
+               %sorted_hoi = sort(triplets.hoi,'descend');
+               %results{i,'hoi'} = mean(sorted_hoi(1:2));   
+               
+               % mean of all four triplets in quadruplet
+               results{i,'hoi'} = mean(triplets.hoi(1:4)); 
+            end
+            
+        end
+        
+        function obj = update_quadruplets(obj)
+            % update the hoi for quadruplets
+            
+            for i = 1:length(obj.quadrupletmixing)
+                result = obj.quadrupletmixing{i}; 
+                
+                hois = reshape(cell2mat(result{:,'hois'}),[6, height(result)])';
+                result.hoi = mean(hois(:,1:4),2);               
+
+                obj.quadrupletmixing{i} = result;
             end
             
         end

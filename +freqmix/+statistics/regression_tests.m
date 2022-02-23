@@ -1,24 +1,65 @@
-function [results] = regression_tests(data, mixing, mixing_type, config)
+function [results] = regression_tests(data, mixing, mixing_type, config, varargin)
 
 % imports
 import freqmix.statistics.hypothesis_tests.*
 import freqmix.statistics.utils.*
 
+% parse variable arguments
+p = inputParser;
+addParameter(p,'channel',''); % channel
+parse(p,varargin{:});  
+
 % set initial parameters
-alpha = config.alpha_regression;
-cluster_alpha = config.cluster_alpha;
+alpha = config.(['alpha_' mixing_type]).alpha_group;
+cluster_alpha = config.(['alpha_' mixing_type]).cluster_alpha;
+
 permute_spatially = config.permute_spatially;
 num_permutations = config.n_permutations;
 num_trials = height(data);
 tThreshold = abs(tinv(alpha, num_trials-1));
+summative_only = config.summative_only;
+intra_channel = config.intra_channel;
+
+% filter summative triplets
+if isequal(mixing_type,'triplet')
+    if summative_only
+        mixing = filter_summative(mixing);
+    end
+end
+
+% find id of channel name
+if config.intra_channel
+    channel_id = find(contains(config.channels,p.Results.channel));
+end
+
 
 % set parameters specific to mixing type
 if isequal(mixing_type,'harmonic')
-    unique_mixing = mixing{1}(:,1:4);
+    unique_mixing = mixing{1}(:,1:4);   
+    
+    if intra_channel
+        mixing_index = (unique_mixing.Channel1==channel_id) & (unique_mixing.Channel2==channel_id);  
+    else
+        mixing_index = ones([height(unique_mixing),1]);
+    end
+    
 elseif isequal(mixing_type,'triplet')
-    unique_mixing = mixing{1}(:,1:6);    
+    unique_mixing = mixing{1}(:,1:6);     
+    
+    if intra_channel
+        mixing_index = (unique_mixing.Channel1==channel_id) & (unique_mixing.Channel2==channel_id)  & (unique_mixing.Channel3==channel_id);  
+    else
+        mixing_index = ones([height(unique_mixing),1]);
+    end
+    
 elseif isequal(mixing_type, 'quadruplet')
-    unique_mixing = mixing{1}(:,1:8);    
+    unique_mixing = mixing{1}(:,1:8);   
+    
+    if intra_channel
+        mixing_index = (unique_mixing.Channel1==channel_id) & (unique_mixing.Channel2==channel_id)  & (unique_mixing.Channel3==channel_id)  & (unique_mixing.Channel4==channel_id);  
+    else
+        mixing_index = ones([height(unique_mixing),1]);
+    end
 end
 n_mix = height(unique_mixing);
 
@@ -31,14 +72,22 @@ for i = 1:length(mixing)
     all_test_vals(:,i) = mixing{i}.hoi;
 end
 
-t_value_vector = zeros(n_mix,1);
-for tr = 1:n_mix   
-    t_value_vector(tr,1) = simpleCorrCoef(all_test_vals(tr,:)',metadata);
-end
+% t_value_vector = zeros(n_mix,1);
+% for tr = 1:n_mix   
+%     t_value_vector(tr,1) = simpleCorrCoef(all_test_vals(tr,:)',metadata);
+% end
+t_value_vector = simpleCorrCoef(all_test_vals',metadata)';
 
 
 tests{1} = 'positive';
 tests{2} = 'negative';
+
+% updating group names with channel ids (if intra-channel)
+if intra_channel
+    for t = 1:length(tests)
+        tests{t} = [tests{t} '_' p.Results.channel];
+    end
+end
 
 
 for k = 1:2
@@ -59,15 +108,14 @@ for k = 1:2
     % construct adjacency matrix betwen significant mixing
     adjacency_matrix = mix_distance(sig_mixing, config, mixing_type);
 
-    % find clusters
+    % find clusters                                                              
     [cc_orig, real_cluster_tsum] = find_clusters(t_value_vector, idx_sig, adjacency_matrix,...
-                                                                  tThreshold, original_id, unique_mixing);
-
+                                                                  original_id, unique_mixing);
     % repeat process for permuted triplet table
     perm_cluster_distribution = [];     
     
     for p = 1:num_permutations 
-
+        
         % permute between samples
         shuffle = randsample(1:size(all_test_vals,2),size(all_test_vals,2)) ;
         all_test_vals_perm = all_test_vals(:,shuffle);
@@ -77,12 +125,14 @@ for k = 1:2
             shuffle = randsample(1:size(all_test_vals,1),size(all_test_vals,1)) ;
             all_test_vals_perm = all_test_vals_perm(shuffle,:);
         end
-
+        
         % perform regression tests
-        t_value_vector_perm = zeros(n_mix,1);
-        for tr = 1:n_mix   
-            t_value_vector_perm(tr,1) = simpleCorrCoef(all_test_vals_perm(tr,:)',metadata);
-        end
+%         t_value_vector_perm = zeros(n_mix,1);
+%         for tr = 1:n_mix   
+%             t_value_vector_perm(tr,1) = simpleCorrCoef(all_test_vals_perm(tr,:)',metadata);
+%         end
+        t_value_vector_perm = simpleCorrCoef(all_test_vals_perm',metadata)';
+        
         
         % convert to negative correlation
         if k==2
@@ -99,9 +149,7 @@ for k = 1:2
 
         % find clusters
         [~, cluster_tsum] = find_clusters(t_value_vector_perm, idx_sig, adjacency_matrix,...
-                                                            tThreshold, original_id, unique_mixing);
-
-
+                                                                      original_id, unique_mixing);
 
         % storing the sum of t-values for each cluster
         % find the largest sum of tvalues for a given permutation
