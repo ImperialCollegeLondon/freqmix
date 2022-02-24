@@ -72,6 +72,10 @@ for i = 1:length(mixing)
     all_test_vals(:,i) = mixing{i}.hoi;
 end
 
+% updating 
+all_test_vals = all_test_vals(find(mixing_index),:);
+unique_mixing = unique_mixing(find(mixing_index),:);
+
 % t_value_vector = zeros(n_mix,1);
 % for tr = 1:n_mix   
 %     t_value_vector(tr,1) = simpleCorrCoef(all_test_vals(tr,:)',metadata);
@@ -101,6 +105,7 @@ for k = 1:2
     
     
     idx_sig = (t_value_vector > tThreshold);
+    disp(sum(idx_sig));
     sig_mixing = unique_mixing(idx_sig,:);
     original_id = linspace(1,height(unique_mixing),height(unique_mixing));
     original_id = original_id(idx_sig);

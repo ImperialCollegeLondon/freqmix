@@ -12,6 +12,11 @@ plot_tstat_bands_graph(mixing, mixing_combinations, config);
 
 plot_tstat_channels_graph(mixing,mixing_combinations,config);
 
+% save csv file of mixing
+if config.savedata
+    writetable(mixing,[config.folder,'significant_quadruplets.csv'])
+end
+
 end
 
 function plot_3d_scatter(mixing,config)
