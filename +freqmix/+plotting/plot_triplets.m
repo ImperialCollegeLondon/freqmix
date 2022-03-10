@@ -214,15 +214,13 @@ import freqmix.plotting.utils.*
 channels = config.channels;
 
 for ch = 1:length(channels)
-    chan = ch;    
     channel_presence = [cell2mat(mixing_combinations(:,4)),cell2mat(mixing_combinations(:,5)),cell2mat(mixing_combinations(:,6))];
-    n_tested_trips_ch(ch) = sum(sum(channel_presence)); %/n_tested_trips_band(band);
+    n_tested_trips_ch(ch) = sum(sum(channel_presence==ch)); %/n_tested_trips_band(band);
 end
 
 for ch = 1:length(channels)
-    chan = ch;    
     channel_presence = [mixing{:,4},mixing{:,5},mixing{:,6}];
-    n_trips_ch(ch) = sum(sum(channel_presence))/n_tested_trips_ch(ch);
+    n_trips_ch(ch) = sum(sum(channel_presence==ch))/n_tested_trips_ch(ch);
 end
 
 p = generate_skeleton_graph(channels);
@@ -281,13 +279,13 @@ teststats = mixing.teststats;
 for ch = 1:length(channels)
     chan = ch;    
     channel_presence = [cell2mat(mixing_combinations(:,4)),cell2mat(mixing_combinations(:,5)),cell2mat(mixing_combinations(:,6))];
-    n_tested_trips_ch(ch) = sum(sum(channel_presence)); %/n_tested_trips_band(band);
+    n_tested_trips_ch(ch) = sum(sum(channel_presence==ch)); %/n_tested_trips_band(band);
 end
 
 for ch = 1:length(channels)
     chan = ch;    
     channel_presence = [mixing{:,4},mixing{:,5},mixing{:,6}];
-    teststat_total_ch(ch) = sum(sum(channel_presence,2).*teststats)/n_tested_trips_ch(ch);
+    teststat_total_ch(ch) = sum(sum(channel_presence==ch,2).*teststats)/n_tested_trips_ch(ch);
 end
 
 

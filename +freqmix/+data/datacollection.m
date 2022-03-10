@@ -69,7 +69,8 @@ classdef datacollection
                            ["sampling_frequency", "single"];
                            ["delta_t", "single"];
                            ["spectrum", "cell"];
-                           ["metadata", "single"]];
+                           ["metadata", "single"];
+                           ["band_power","single"]];
                                 
             data_table = table('Size',[obj.signal_info.n_signals,size(constructor,1)],... 
                         'VariableNames', constructor(:,1),...
@@ -251,6 +252,8 @@ classdef datacollection
             obj = obj.set_data_columns();
             
         end
+        
+
         
     end
 end

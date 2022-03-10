@@ -3,7 +3,7 @@ function [] = plot_harmonics(mixing,config)
 %   Detailed explanation goes here
 
 % extract frequencies and channels from table
-mixing_combinations = config.mixing_combinations.harmonics;
+mixing_combinations = config.mixing_combinations.harmonic;
 
 % plot 3d scatters
 plot_2d_scatter(mixing,config);

@@ -93,7 +93,7 @@ group_comparisons = unique(group_comparisons(:,1:2),'rows');
 % combine all test values
 all_test_vals = [];
 for i = 1:length(mixing)
-    all_test_vals(:,i) = mixing{i}.hoi;
+    all_test_vals(:,i) = log(mixing{i}.hoi);
 end
 
 all_test_vals = all_test_vals(find(mixing_index),:);

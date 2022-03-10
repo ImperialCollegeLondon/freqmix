@@ -222,8 +222,8 @@ classdef frequencymixing
                %sorted_hoi = sort(triplets.hoi,'descend');
                %results{i,'hoi'} = mean(sorted_hoi(1:2));   
                
-               % mean of all four triplets in quadruplet
-               results{i,'hoi'} = mean(triplets.hoi(1:4)); 
+               % median of all four triplets in quadruplet
+               results{i,'hoi'} = median(triplets.hoi(1:4)); 
             end
             
         end
@@ -235,7 +235,7 @@ classdef frequencymixing
                 result = obj.quadrupletmixing{i}; 
                 
                 hois = reshape(cell2mat(result{:,'hois'}),[6, height(result)])';
-                result.hoi = mean(hois(:,1:4),2);               
+                result.hoi = median(hois(:,1:4),2);               
 
                 obj.quadrupletmixing{i} = result;
             end
@@ -301,7 +301,12 @@ classdef frequencymixing
             dependence_result = test(phases,...
                                      obj.config.sigma,obj.config.n_bootstraps,...
                                      obj.config.alpha,obj.config.use_gpu);
-
+            
+%             dependence_result2 = test2(phases([1,3],:),...
+%                                      obj.config.sigma,obj.config.n_bootstraps,...
+%                                      obj.config.alpha,obj.config.use_gpu);  
+%                                  
+            
             
             % only compute triplet type for triplets
             if obj.config.triplet_type && width(freqs)==3
@@ -376,7 +381,13 @@ classdef frequencymixing
                 end
             end
       
-                                
+            % check summative harmonics
+            if isequal(type,'harmonic')                
+                for i = 1:height(empty_table)
+                    empty_table.summative(i) = (empty_table{i,'Freq1'}*2 == empty_table{i,'Freq2'});
+                end
+            end   
+            
         end
         
         function obj = get_frequency_channel_combinations(obj)
@@ -498,8 +509,9 @@ classdef frequencymixing
                                ["teststat", "single"]; ...
                                ["quantile", "single"]; ...
                                ["hoi", "single"]; ...
-                               ["clusterpvalue", "single"]];          
-                
+                               ["clusterpvalue", "single"]; ...          
+                               ["summative", "int8"]];
+
             elseif isequal(type, 'triplet')
                 constructor = [["Freq1", "single"]; ...
                                ["Freq2", "single"]; ...

@@ -60,7 +60,11 @@ classdef config_frequencymixing < freqmix.config.config_base
             
             % check quadruplets are present
             if obj.test_quadruplets
-
+                
+                % must test triplets and harmonics for quadruplets
+                obj.test_triplets = true;
+                obj.test_harmonics = true;
+                
                 if isempty(obj.quadruplets)
                     [obj.quadruplets, obj.triplets, obj.harmonics] = freqmix.frequencymixing.quadruplets.find_quadruplets(obj.frequencies,...
                                                                        obj.frequency_gap,...
