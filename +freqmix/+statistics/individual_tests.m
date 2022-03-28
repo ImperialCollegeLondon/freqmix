@@ -4,8 +4,9 @@ import freqmix.statistics.hypothesis_tests.*
 import freqmix.statistics.utils.*
 
 % set initial parameters
-alpha = config.alpha_individual;
-cluster_alpha = config.cluster_alpha;
+alpha = config.(['alpha_' mixing_type]).alpha_group;
+cluster_alpha = config.(['alpha_' mixing_type]).cluster_alpha;
+
 num_permutations = config.n_permutations;
 
 % set parameters specific to mixing type
@@ -23,10 +24,16 @@ results = {};
 % loop over each signal
 for k = 1:height(mixing)
     signal_mixing = mixing{k};
+
     
     % all test values
-    pvalues = signal_mixing.pvalue;
     test_vals = signal_mixing.hoi;
+    if isequal(mixing_type,'quadruplet')
+        pvalues = (test_vals<1);
+    else
+        pvalues = signal_mixing.pvalue;
+    end    
+    
 
     % one-tailed
     idx_sig = (pvalues < alpha); 

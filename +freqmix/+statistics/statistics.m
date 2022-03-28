@@ -124,7 +124,7 @@ classdef statistics
             obj.logger.log('Running quadruplet statistics ...');
          
             if obj.config.individual_test
-                % to implement
+                obj.quadruplet_statistics.individual_test = [obj.quadruplet_statistics.individual_test; individual_tests(quadruplet_mixing, mixing_type, obj.config)];
             end
             
             if obj.config.group_test

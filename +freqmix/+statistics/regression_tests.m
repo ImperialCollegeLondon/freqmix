@@ -80,7 +80,7 @@ unique_mixing = unique_mixing(find(mixing_index),:);
 % for tr = 1:n_mix   
 %     t_value_vector(tr,1) = simpleCorrCoef(all_test_vals(tr,:)',metadata);
 % end
-t_value_vector = simpleCorrCoef(all_test_vals',metadata)';
+t_value_vector = freqmix.statistics.hypothesis_tests.simpleCorrCoef(all_test_vals',metadata)';
 
 
 tests{1} = 'positive';
@@ -131,7 +131,7 @@ for k = 1:2
             all_test_vals_perm = all_test_vals_perm(shuffle,:);
         end
         
-        % perform regression tests
+        %perform regression tests
 %         t_value_vector_perm = zeros(n_mix,1);
 %         for tr = 1:n_mix   
 %             t_value_vector_perm(tr,1) = simpleCorrCoef(all_test_vals_perm(tr,:)',metadata);

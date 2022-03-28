@@ -1,5 +1,8 @@
 function [t] = simpleCorrCoef(x,y,varargin)
 
+x(isnan(y),:) = [];
+y(isnan(y)) = [];
+
 [r1,~] = size(x);
 
 % De-mean Columns:
@@ -15,6 +18,7 @@ r = nansum(x.*y);
 
 % Calculate p-values if requested:
 t = (r.*sqrt(r1-2))./sqrt(1-r.^2);
+
 
 end
 
