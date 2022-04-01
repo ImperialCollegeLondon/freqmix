@@ -6,8 +6,15 @@ import freqmix.statistics.utils.*
 % set initial parameters
 alpha = config.(['alpha_' mixing_type]).alpha_group;
 cluster_alpha = config.(['alpha_' mixing_type]).cluster_alpha;
-
+summative_only = config.summative_only;
 num_permutations = config.n_permutations;
+
+% filter summative triplets
+if isequal(mixing_type,'triplet')
+    if summative_only
+        mixing = filter_summative(mixing);
+    end
+end
 
 % set parameters specific to mixing type
 if isequal(mixing_type,'harmonic')

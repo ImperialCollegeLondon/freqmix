@@ -1,6 +1,7 @@
 function [] = plot_specific_mixing(mixing, mixing_ids, config)
 %PLOT_INDIVIDUAL_MIXING Summary of this function goes here
 %   Detailed explanation goes here
+import freqmix.plotting.utils.*
 
 % check mixing type
 n_components = sum(contains(mixing{1}.Properties.VariableNames,'Channel'));
