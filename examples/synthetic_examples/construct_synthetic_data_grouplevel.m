@@ -25,6 +25,8 @@ function [signals,group_labels,signal_ids,signal_names,patient_ids] = construct_
                noise_amplitude = varargin{argidx+1};   
            case 'freqs'
                freq_mixing = varargin{argidx+1};  
+           case 'amplitude'
+               amplitude = varargin{argidx+1};  
            case 'n_channels'
                n_channels = varargin{argidx+1}; 
            case 'n_groups'
@@ -40,6 +42,9 @@ function [signals,group_labels,signal_ids,signal_names,patient_ids] = construct_
     end
     if length(noise_amplitude)==1
        noise_amplitude = repmat(noise_amplitude,n_patients*n_groups,1);
+    end
+    if length(amplitude)<2
+        amplitude = [amplitude amplitude];
     end
 
     
