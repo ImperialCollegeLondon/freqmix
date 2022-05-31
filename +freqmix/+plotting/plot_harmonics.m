@@ -27,7 +27,7 @@ function plot_2d_scatter(mixing,config)
     grid on;
     plot_params(gca)
     if config.saveplot
-        savefig([config.folder,'harmonics_2d_scatter.fig'])
+        saveas(gca, [config.folder,'harmonics_2d_scatter',config.ext])
         close all;
     end
 end

@@ -9,6 +9,7 @@ Z = phases(3,:);
 
 n=length(X);
 %TODO: add check that X,Y,Z same length
+%TODO: check if parallel toolbox implemented 
 
 if use_gpu && gpuDeviceCount > 0
     K = GaussKern(gpuArray(X'),gpuArray(X'),sigma);

@@ -1,4 +1,4 @@
-function [] = plot_specific_mixing(mixing, mixing_ids, config)
+function [] = plot_specific_mixing(mixing, mixing_ids, config, title_string)
 %PLOT_INDIVIDUAL_MIXING Summary of this function goes here
 %   Detailed explanation goes here
 import freqmix.plotting.utils.*
@@ -47,9 +47,10 @@ aboxplot(all_values,'labels',mixing_labels)
 legend(group_names);
 ylabel('HOI');
 xlabel(x_label);
+title(title_string);
 if config.saveplot
     check_folder(config.folder)
-    savefig([name,'boxplots.fig'])
+    saveas(gca, [name,'boxplots',config.ext])
 end
 
 

@@ -40,7 +40,7 @@ function plot_3d_scatter(mixing,config)
     grid on;
     plot_params(gca)
     if config.saveplot
-        savefig([config.folder,'triplets_3d_scatter.fig'])
+        saveas(gca, [config.folder,'triplets_3d_scatter',config.ext])
         close all;
     end
 end
@@ -65,7 +65,7 @@ function plot_3d_scatter_coloured(mixing,config)
         plot_params(gca)    
     end
     if config.saveplot
-        savefig([config.folder,'triplets_3d_scatter_clustered.fig'])
+        saveas(gca, [config.folder,'triplets_3d_scatter_clustered',config.ext])
         close all;
     end
 end
@@ -127,7 +127,7 @@ cbarrow(max_edge);
 
 
 if config.saveplot
-    savefig([config.folder,'triplets_ntriplets_freqbands_network.fig'])
+    saveas(gca, [config.folder,'triplets_ntriplets_freqbands_network',config.ext])
     close all;
 end
 
@@ -199,7 +199,7 @@ plot_params(gca)
 cbarrow(max_edge)
 
 if config.saveplot    
-    savefig([config.folder,'triplets_sumt_freqbands_network.fig'])
+    saveas(gca, [config.folder,'triplets_sumt_freqbands_network',config.ext])
     close all;
 end
 
@@ -261,7 +261,7 @@ if config.title
 end
 plot_params(gca)
 if config.saveplot
-    savefig([config.folder,'triplets_ntriplets_channels.fig']) 
+    saveas(gca, [config.folder,'triplets_ntriplets_channels',config.ext]) 
     close all;
 end
 
@@ -324,7 +324,7 @@ if config.title
 end
 plot_params(gca)
 if config.saveplot
-    savefig([config.folder,'triplets_sumt_channels_network.fig'])
+    saveas(gca, [config.folder,'triplets_sumt_channels_network',config.ext])
     close all;
 end
 

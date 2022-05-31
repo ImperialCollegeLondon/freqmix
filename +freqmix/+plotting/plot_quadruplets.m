@@ -46,7 +46,7 @@ function plot_3d_scatter(mixing,config)
     grid on;
     plot_params(gca)
     if config.saveplot
-        savefig([config.folder,'quadruplets_3d_scatter.fig'])
+        saveas(gca, [config.folder,'quadruplets_3d_scatter',config.ext])
         close all;
     end
 end
@@ -68,20 +68,20 @@ function plot_2d_scatter(mixing,config)
     grid on;
     plot_params(gca)
     if config.saveplot
-        savefig([config.folder,'quadruplets_2d_scatter_roots.fig'])
+        saveas(gca, [config.folder,'quadruplets_2d_scatter_roots',config.ext])
         close all;
     end
     
     figure;          
     scatter(e1,e2); 
     
-    xlabel('f1 (Hz)');ylabel('f2 (Hz)');
+    xlabel('f\Delta (Hz)');ylabel('f\Sigma (Hz)');
     title(['Frequency mixing emergents'])        
     xlim([config.min_freq config.max_freq]); ylim([config.min_freq config.max_freq]);
     grid on;
     plot_params(gca)
     if config.saveplot
-        savefig([config.folder,'quadruplets_2d_scatter_emergents.fig'])
+        saveas(gca, [config.folder,'quadruplets_2d_scatter_emergents',config.ext])
         close all;
     end    
 end
@@ -144,7 +144,7 @@ cbarrow(max_edge);
 
 
 if config.saveplot
-    savefig([config.folder,'quadruplets_nroots_freqbands_network.fig'])
+    saveas(gca, [config.folder,'quadruplets_nroots_freqbands_network',config.ext])
     close all;
 end
 
@@ -175,7 +175,7 @@ end
 
 
 if config.saveplot
-    savefig([config.folder,'quadruplets_nemergents_freqbands_barchart.fig'])
+    saveas(gca, [config.folder,'quadruplets_nemergents_freqbands_barchart',config.ext])
     close all;
 end
 
@@ -245,7 +245,7 @@ plot_params(gca)
 cbarrow(max_edge)
 
 if config.saveplot    
-    savefig([config.folder,'quadruplets_sumtroots_freqbands_network.fig'])
+    saveas(gca, [config.folder,'quadruplets_sumtroots_freqbands_network',config.ext])
     close all;
 end
 
@@ -275,7 +275,7 @@ if config.title
 end
 
 if config.saveplot    
-    savefig([config.folder,'quadruplets_sumtemergents_freqbands_barchart.fig'])
+    saveas(gca, [config.folder,'quadruplets_sumtemergents_freqbands_barchart',config.ext])
     close all;
 end
 
@@ -337,7 +337,7 @@ if config.title
 end
 plot_params(gca)
 if config.saveplot
-    savefig([config.folder,'quadruplets_nroots_channels.fig']) 
+    saveas(gca, [config.folder,'quadruplets_nroots_channels',config.ext]) 
     close all;
 end
 
@@ -367,7 +367,7 @@ if config.title
 end
 
 if config.saveplot    
-    savefig([config.folder,'quadruplets_nemergents_channels_barchart.fig'])
+    saveas(gca, [config.folder,'quadruplets_nemergents_channels_barchart',config.ext])
     close all;
 end
 
@@ -430,7 +430,7 @@ if config.title
 end
 plot_params(gca)
 if config.saveplot
-    savefig([config.folder,'quadruplets_sumtroots_channels_network.fig'])
+    saveas(gca, [config.folder,'quadruplets_sumtroots_channels_network',config.ext])
     close all;
 end
 
@@ -461,7 +461,7 @@ if config.title
 end
 
 if config.saveplot    
-    savefig([config.folder,'quadruplets_sumtemergents_channels_barchart.fig'])
+    saveas(gca, [config.folder,'quadruplets_sumtemergents_channels_barchart',config.ext])
     close all;
 end
 

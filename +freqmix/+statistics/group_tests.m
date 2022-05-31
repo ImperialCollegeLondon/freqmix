@@ -20,6 +20,7 @@ num_trials = height(data);
 tThreshold = abs(tinv(alpha, num_trials-1));
 summative_only = config.summative_only;
 intra_channel = config.intra_channel;
+three_channel = config.three_channel;
 
 % filter summative triplets
 if isequal(mixing_type,'triplet')
@@ -51,6 +52,8 @@ if isequal(mixing_type,'harmonic')
     
     if intra_channel
         mixing_index = (unique_mixing.Channel1==channel_id) & (unique_mixing.Channel2==channel_id);  
+    elseif three_channel
+        mixing_index = (unique_mixing.Channel1~=unique_mixing.Channel2);  
     else
         mixing_index = ones([height(unique_mixing),1]);
     end
@@ -60,6 +63,8 @@ elseif isequal(mixing_type,'triplet')
     
     if intra_channel
         mixing_index = (unique_mixing.Channel1==channel_id) & (unique_mixing.Channel2==channel_id)  & (unique_mixing.Channel3==channel_id);  
+    elseif three_channel
+        mixing_index = (unique_mixing.Channel1~=unique_mixing.Channel2) & (unique_mixing.Channel2~=unique_mixing.Channel3)  & (unique_mixing.Channel1~=unique_mixing.Channel3);
     else
         mixing_index = ones([height(unique_mixing),1]);
     end
@@ -69,6 +74,8 @@ elseif isequal(mixing_type, 'quadruplet')
     
     if intra_channel
         mixing_index = (unique_mixing.Channel1==channel_id) & (unique_mixing.Channel2==channel_id)  & (unique_mixing.Channel3==channel_id)  & (unique_mixing.Channel4==channel_id);  
+    elseif three_channel
+        mixing_index = (unique_mixing.Channel1~=unique_mixing.Channel2) & (unique_mixing.Channel1~=unique_mixing.Channel3) & (unique_mixing.Channel1~=unique_mixing.Channel4) & (unique_mixing.Channel2~=unique_mixing.Channel3) & (unique_mixing.Channel2~=unique_mixing.Channel4) & (unique_mixing.Channel3~=unique_mixing.Channel4);
     else
         mixing_index = ones([height(unique_mixing),1]);
     end

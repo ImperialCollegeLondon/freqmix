@@ -29,7 +29,7 @@ n_mix = height(unique_mixing);
 
 results = {};
 % loop over each signal
-for k = 1:height(mixing)
+for k = 1:length(mixing)
     signal_mixing = mixing{k};
 
     

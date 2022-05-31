@@ -130,6 +130,7 @@ classdef config_experiments < freqmix.config.config_base
             addParameter(p,'folder',obj.config_plotting.folder); % plotting folder
             addParameter(p,'saveplot',obj.config_plotting.saveplot); % save plots or not
             addParameter(p,'savedata',obj.config_plotting.savedata); % save data used for plotting or not
+            addParameter(p,'ext',obj.config_plotting.ext); % extension for figure type
             parse(p,arguments{:});  
             for i = 1:length(p.Parameters)
                 obj.config_plotting.(p.Parameters{i}) = p.Results.(p.Parameters{i});

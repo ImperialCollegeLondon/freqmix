@@ -19,11 +19,12 @@ classdef config_statistics < freqmix.config.config_base
         
         n_permutations = 10000 % number of permutations cluster tests
         paired = true % if paired samples present, then paired tests.
-        permute_spatially = true % permutations in frequency + channels
+        permute_spatially = false % permutations in frequency + channels
         equal_variance = false; % equal variance in t-test assumption
         freq_bin_size = 1; % freq bin size (should be the same as used in spectrum)
         
-        intra_channel = false;
+        intra_channel = false; % only look inside a single channel
+        three_channel = false; % all channels must be different
         channels = {};
         
         summative_only = 1; % only perform stats on triplets that are summative (or subtractive)
