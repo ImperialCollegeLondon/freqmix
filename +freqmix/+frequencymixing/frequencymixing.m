@@ -188,6 +188,7 @@ classdef frequencymixing
                 else
                     % loop over all samples
                     for i = 1:height(datacollection.data)
+                        disp(i)
                         quadruplet_mixing{i} = obj.calculate_quadruplets(obj.tripletmixing{i},obj.harmonicmixing{i});
                     end         
                 end
