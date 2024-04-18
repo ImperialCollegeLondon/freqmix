@@ -3,7 +3,7 @@
 This is the official repository of *freqmix*, a toolbox for decomposing frequency mixing within time-series signals. Originally purposed for neuroscientific data, e.g., EEG, LPF data) but is general to any time-series signal data. It examines harmonics, triplets and quadruplets.
 
 <p align="center">
-  <img src="./artwork/freqmix_header.png" alt="plot">
+  <img src="./artwork/freqmix_header.png" alt="plot" width="50%">
 </p>
 
 Rhythmic neural oscillations underpin cognitive and motoric processes and regulate numerous activity-dependent cellular processes in the brain. In the presence of non-linearities, concurrent oscillatory signals can combine to generate novel oscillations, a process described as frequency mixing. It has not yet been determined whether frequency mixing occurs at the single neuron, nor the origin of frequency mixing in neural activity. Moreover, the presence of frequency mixing in human brain activity and whether it plays a functional role is still an open question.
