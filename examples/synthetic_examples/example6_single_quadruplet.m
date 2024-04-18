@@ -1,6 +1,6 @@
-%% Example 1
+%% Example 5
 
-% Full scan of frequency mixing 0-40 hz (harmonics, triplets, quadruplets). 
+% Scan of frequency mixing 0-40 hz but filtered with only 10Hz root frequency (harmonics, triplets, quadruplets). 
 % Comparison of two groups with and without frequency mixing.
 
 
@@ -33,9 +33,11 @@ figure;plot(f,abs(y));xlim([0,30])
 
 %% Construct main objects and load data 
 
+        
+
 % define a configuration file
 cfg = freqmix.config.config_experiments('data_type','eeg',...
-                                     'frequency_range',[0 30],...
+                                     'quadruplets', [7 18 11 25],...
                                      'sampling_frequency',fs,...
                                      'test_quadruplets',true,...
                                      'test_triplets',true,...
@@ -82,8 +84,6 @@ load('synthetic_experiment.mat')
 plotting_config = exp.config.config_plotting;
 mixing = exp.frequencymixing.quadrupletmixing;
 freqmix.plotting.plot_mixing(mixing,'mixing_ids',[1],'config',plotting_config);
-
-
 
 
 

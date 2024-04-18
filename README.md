@@ -21,9 +21,11 @@ Please clone the repository and you can start straight away. and install any nec
 ### Necessary
 * MatLab
 * Bioinformatics Toolbox
+* Parallel processing Toolbox
+* Econometrics Toolbox
+
 
 ### Helpful
-* Parallel processing Toolbox
 
 
 ## Main Work Flow

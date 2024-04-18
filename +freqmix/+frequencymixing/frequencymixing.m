@@ -180,7 +180,7 @@ classdef frequencymixing
                     
                     % loop over all samples
                     parfor i = 1:height(datacollection.data)                        
-                        quadruplet_mixing{i} = obj.calculate_quadruplets(obj.tripletmixing{i},obj.harmonicmixing{i});
+                        quadruplet_mixing{i} = obj.calculate_quadruplets(obj.tripletmixing{i}, obj.harmonicmixing{i});
                         
                         % update data queue
                         send(D, i);  

@@ -21,16 +21,21 @@ classdef spectrum
         
         function obj = compute_spectrum(obj,data)
             
+            if isempty(obj.config.freqs)
+                obj.freqs = obj.config.min_freq+obj.config.freq_bin_size:obj.config.freq_bin_size:obj.config.max_freq;
+                obj.config.freqs = obj.config.min_freq+obj.config.freq_bin_size:obj.config.freq_bin_size:obj.config.max_freq;
+            end
+            
             if isequal(obj.config.spectrum_method,'wavelet')
                 spectrum_ = freqmix.spectrum.WaveletTransform(data,...
                                                         1/obj.config.sampling_frequency,...
-                                                        obj.config.min_freq+obj.config.freq_bin_size:obj.config.freq_bin_size:obj.config.max_freq,...
+                                                        obj.config.freqs,...
                                                         'WAVELETSPEC',obj.config.wavelet_parameters);
                                                     
             elseif isequal(obj.config.spectrum_method,'hilbert')
                 spectrum_ = freqmix.spectrum.HilbertTransform(data,...
                                                         1/obj.config.sampling_frequency,...
-                                                        obj.config.min_freq+obj.config.freq_bin_size:obj.config.freq_bin_size:obj.config.max_freq);                  
+                                                        obj.config.freqs);                  
             end
             
 

@@ -2,7 +2,7 @@ function p = generate_skeleton_graph(band_ids)
 
 adj_skeleton = ones(length(band_ids),length(band_ids));
 g_skeleton = graph(adj_skeleton,band_ids);
-figure;p = plot(g_skeleton,'Layout','circle');hold on;
+p = plot(g_skeleton,'Layout','circle');hold on;
 p.EdgeColor = [0.1 0.1 0.1];
 p.NodeColor = [0.1 0.1 0.1];
 p.EdgeAlpha = 0.5;

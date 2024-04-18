@@ -8,7 +8,8 @@ classdef config_spectrum < freqmix.config.config_base
         sampling_frequency
         freq_bin_size = 1;
         min_freq = 0;
-        max_freq = 1;       
+        max_freq = 1;  
+        freqs = [];
     end
     
     methods

@@ -105,7 +105,7 @@ function [signal] = generate_signal(freqs,Q,sampling_rate,total_t,amplitude,n_ch
     
 
     % define imports
-    import freqmix.data.synthetic.generate_synthetic_signal
+    import freqmix.data.synthetic.*
     
     % signal 1 parameters
     params_1.Fs = sampling_rate;
@@ -130,8 +130,8 @@ function [signal] = generate_signal(freqs,Q,sampling_rate,total_t,amplitude,n_ch
     params_2.IA_high      = ones(size(params_2.ctl_pts_t))*amplitude(2);
     params_2.n_signals = n_channels; 
  
-    root1 = generate_synthetic_signal(params_1);%root1 = sum(root1,1);     
-    root2 = generate_synthetic_signal(params_2);%root2 = sum(root2,1);   
+    root1 = freqmix.data.synthetic.generate_synthetic_signal(params_1);%root1 = sum(root1,1);     
+    root2 = freqmix.data.synthetic.generate_synthetic_signal(params_2);%root2 = sum(root2,1);   
         
     signal = linear_mixing*(root1'+ root2')+ quadratic_mixing*(root1' + root2').^2 + cubic_mixing*(root1' + root2').^3;
 end
